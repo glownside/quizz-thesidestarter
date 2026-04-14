@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quel est ton profil side-business ?</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --purple: #7C5CFC;
+    --purple-light: #EDE8FF;
+    --purple-dark: #4A2FD4;
+    --cream: #FBF8F3;
+    --ink: #1A1028;
+    --muted: #7B6F8A;
+    --border: rgba(124,92,252,0.15);
+    --white: #ffffff;
+    --radius: 16px;
+    --radius-sm: 10px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--cream);
+    color: var(--ink);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  /* ── HEADER ── */
+  header {
+    width: 100%;
+    padding: 1.25rem 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--border);
+    background: var(--white);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+
+  .logo {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.1rem;
+    color: var(--purple);
+    letter-spacing: -0.01em;
+  }
+
+  .header-tag {
+    font-size: 12px;
+    color: var(--muted);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  /* ── MAIN LAYOUT ── */
+  main {
+    width: 100%;
+    max-width: 680px;
+    padding: 3rem 1.5rem 5rem;
+    flex: 1;
+  }
+
+  /* ── INTRO SCREEN ── */
+  #intro {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding-top: 1rem;
+  }
+
+  .intro-badge {
+    display: inline-block;
+    background: var(--purple-light);
+    color: var(--purple);
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 6px 14px;
+    border-radius: 30px;
+    margin-bottom: 1.75rem;
+  }
+
+  .intro-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(2rem, 5vw, 3rem);
+    line-height: 1.15;
+    color: var(--ink);
+    margin-bottom: 1.25rem;
+    max-width: 520px;
+  }
+
+  .intro-title em {
+    font-style: italic;
+    color: var(--purple);
+  }
+
+  .intro-desc {
+    font-size: 16px;
+    color: var(--muted);
+    line-height: 1.7;
+    max-width: 460px;
+    margin-bottom: 2rem;
+  }
+
+  .intro-meta {
+    display: flex;
+    gap: 1.5rem;
+    margin-bottom: 2.5rem;
+    font-size: 13px;
+    color: var(--muted);
+  }
+
+  .intro-meta span { display: flex; align-items: center; gap: 6px; }
+
+  .dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--purple);
+    display: inline-block;
+  }
+
+  .btn-start {
+    background: var(--purple);
+    color: var(--white);
+    border: none;
+    padding: 16px 40px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    font-weight: 500;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.15s;
+    letter-spacing: 0.01em;
+  }
+
+  .btn-start:hover { background: var(--purple-dark); transform: translateY(-1px); }
+  .btn-start:active { transform: translateY(0); }
+
+  /* ── QUIZ SCREEN ── */
+  #quiz { display: none; }
+
+  .progress-wrap {
+    margin-bottom: 2.5rem;
+  }
+
+  .progress-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+
+  .progress-label {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--purple);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .progress-count {
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  .progress-bar {
+    height: 3px;
+    background: var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: var(--purple);
+    border-radius: 2px;
+    transition: width 0.5s cubic-bezier(0.4,0,0.2,1);
+  }
+
+  .q-text {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(1.3rem, 3vw, 1.75rem);
+    line-height: 1.3;
+    color: var(--ink);
+    margin-bottom: 1.75rem;
+  }
+
+  .options {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 2rem;
+  }
+
+  .opt {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 16px 18px;
+    background: var(--white);
+    border: 1.5px solid transparent;
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: border-color 0.15s, background 0.15s, transform 0.1s;
+    box-shadow: 0 1px 3px rgba(26,16,40,0.05);
+  }
+
+  .opt:hover {
+    border-color: var(--purple);
+    transform: translateX(3px);
+  }
+
+  .opt.selected {
+    border-color: var(--purple);
+    background: var(--purple-light);
+    box-shadow: none;
+  }
+
+  .opt-letter {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 1.5px solid #DDD4FF;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--muted);
+    flex-shrink: 0;
+    margin-top: 1px;
+    transition: background 0.15s, border-color 0.15s, color 0.15s;
+  }
+
+  .opt.selected .opt-letter {
+    background: var(--purple);
+    border-color: var(--purple);
+    color: var(--white);
+  }
+
+  .opt-text {
+    font-size: 14.5px;
+    line-height: 1.55;
+    color: var(--ink);
+    padding-top: 4px;
+  }
+
+  .nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .btn-prev {
+    background: transparent;
+    border: 1.5px solid var(--border);
+    padding: 12px 24px;
+    border-radius: 50px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    color: var(--muted);
+    cursor: pointer;
+    transition: border-color 0.15s, color 0.15s;
+  }
+
+  .btn-prev:hover { border-color: var(--purple); color: var(--purple); }
+  .btn-prev:disabled { opacity: 0.3; cursor: not-allowed; }
+  .btn-prev:disabled:hover { border-color: var(--border); color: var(--muted); }
+
+  .btn-next {
+    background: var(--purple);
+    color: var(--white);
+    border: none;
+    padding: 12px 28px;
+    border-radius: 50px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s, opacity 0.2s;
+  }
+
+  .btn-next:hover { background: var(--purple-dark); transform: translateY(-1px); }
+  .btn-next:disabled { opacity: 0.35; cursor: not-allowed; transform: none; }
+
+  /* ── RESULT SCREEN ── */
+  #result { display: none; }
+
+  .result-hero {
+    background: var(--purple);
+    border-radius: var(--radius);
+    padding: 2rem 2rem 1.75rem;
+    color: var(--white);
+    margin-bottom: 1.25rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .result-hero::before {
+    content: '';
+    position: absolute;
+    top: -40px; right: -40px;
+    width: 180px; height: 180px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.06);
+  }
+
+  .result-hero::after {
+    content: '';
+    position: absolute;
+    bottom: -60px; left: -20px;
+    width: 220px; height: 220px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.04);
+  }
+
+  .result-label {
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    opacity: 0.7;
+    margin-bottom: 8px;
+  }
+
+  .result-profil {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(1.6rem, 4vw, 2.2rem);
+    line-height: 1.2;
+    margin-bottom: 6px;
+  }
+
+  .result-tag-hero {
+    font-size: 13px;
+    opacity: 0.8;
+    font-style: italic;
+    margin-bottom: 1.25rem;
+  }
+
+  .result-module-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.25);
+    padding: 8px 14px;
+    border-radius: 50px;
+    font-size: 13px;
+    font-weight: 500;
+  }
+
+  .result-card {
+    background: var(--white);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+    box-shadow: 0 1px 3px rgba(26,16,40,0.06);
+  }
+
+  .result-card-title {
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--purple);
+    font-weight: 500;
+    margin-bottom: 10px;
+  }
+
+  .result-desc {
+    font-size: 14.5px;
+    line-height: 1.7;
+    color: #4A3F5C;
+  }
+
+  .path-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .path-step {
+    background: var(--purple-light);
+    color: var(--purple-dark);
+    font-size: 13px;
+    font-weight: 500;
+    padding: 6px 14px;
+    border-radius: 50px;
+  }
+
+  .path-arrow { color: var(--muted); font-size: 14px; }
+
+  .objectif-box {
+    background: var(--purple-light);
+    border-left: 3px solid var(--purple);
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+    padding: 14px 16px;
+    font-size: 14px;
+    color: var(--purple-dark);
+    line-height: 1.6;
+  }
+
+  .objectif-box strong {
+    display: block;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+    opacity: 0.7;
+  }
+
+  .scores-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .score-item {
+    background: var(--cream);
+    border-radius: var(--radius-sm);
+    padding: 12px 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .score-item.winner {
+    background: var(--purple-light);
+    border: 1.5px solid #DDD4FF;
+  }
+
+  .score-name { font-size: 13px; color: var(--muted); }
+  .score-item.winner .score-name { color: var(--purple-dark); font-weight: 500; }
+  .score-val { font-size: 15px; font-weight: 500; color: var(--ink); }
+  .score-item.winner .score-val { color: var(--purple); }
+
+  .btn-cta {
+    width: 100%;
+    background: var(--purple);
+    color: var(--white);
+    border: none;
+    padding: 17px;
+    border-radius: 50px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.15s;
+    margin-top: 1.25rem;
+    letter-spacing: 0.01em;
+  }
+
+  .btn-cta:hover { background: var(--purple-dark); transform: translateY(-1px); }
+
+  .btn-restart {
+    width: 100%;
+    background: transparent;
+    border: 1.5px solid var(--border);
+    color: var(--muted);
+    padding: 12px;
+    border-radius: 50px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: border-color 0.15s, color 0.15s;
+  }
+
+  .btn-restart:hover { border-color: var(--purple); color: var(--purple); }
+
+  /* ── FOOTER ── */
+  footer {
+    width: 100%;
+    text-align: center;
+    padding: 1.5rem;
+    font-size: 12px;
+    color: var(--muted);
+    border-top: 1px solid var(--border);
+  }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .fade-up { animation: fadeUp 0.4s ease forwards; }
+
+  @media (max-width: 480px) {
+    main { padding: 2rem 1rem 4rem; }
+    .intro-meta { flex-direction: column; gap: 0.5rem; align-items: center; }
+    .scores-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">Side Business Lab</div>
+  <div class="header-tag">Questionnaire de profilage</div>
+</header>
+
+<main>
+
+  <!-- INTRO -->
+  <div id="intro" class="fade-up">
+    <div class="intro-badge">Gratuit · 3 minutes</div>
+    <h1 class="intro-title">Quel est ton <em>vrai</em> blocage side-business ?</h1>
+    <p class="intro-desc">9 questions pour identifier ton profil exact et recevoir un parcours 100% personnalisé. Pas de bla-bla — juste ce dont tu as vraiment besoin pour avancer.</p>
+    <div class="intro-meta">
+      <span><span class="dot"></span> 9 questions</span>
+      <span><span class="dot"></span> Résultat immédiat</span>
+      <span><span class="dot"></span> Plan d'action J+14</span>
+    </div>
+    <button class="btn-start" onclick="startQuiz()">Découvrir mon profil →</button>
+  </div>
+
+  <!-- QUIZ -->
+  <div id="quiz">
+    <div class="progress-wrap">
+      <div class="progress-meta">
+        <span class="progress-label" id="progress-label">Question 1</span>
+        <span class="progress-count" id="progress-count">1 / 9</span>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-fill" id="progress-fill" style="width: 11%"></div>
+      </div>
+    </div>
+    <h2 class="q-text" id="q-text"></h2>
+    <div class="options" id="options"></div>
+    <div class="nav">
+      <button class="btn-prev" id="btn-prev" onclick="prevQ()" disabled>← Précédent</button>
+      <button class="btn-next" id="btn-next" onclick="nextQ()" disabled>Suivant →</button>
+    </div>
+  </div>
+
+  <!-- RESULT -->
+  <div id="result"></div>
+
+</main>
+
+<footer>
+  Questionnaire de profilage · Side Business Lab · Confidentiel
+</footer>
+
+<script>
+const questions = [
+  {
+    q: "Où en es-tu avec ton idée de side-business ?",
+    opts: [
+      { l:"A", t:"Je n'ai pas encore d'idée précise — ou j'en ai trop, et je ne sais pas laquelle choisir.", p:"Bloquée" },
+      { l:"B", t:"J'ai une idée claire mais je ne sais pas comment la transformer en offre vendable.", p:"Bloquée" },
+      { l:"C", t:"J'ai déjà une offre définie et parfois même un produit créé.", p:"Freinée" },
+      { l:"D", t:"J'ai plusieurs projets en cours en parallèle, aucun n'avance vraiment.", p:"Dispersée" }
+    ]
+  },
+  {
+    q: "Combien de temps consacres-tu à ton side-business en ce moment ?",
+    opts: [
+      { l:"A", t:"Moins de 2h par semaine — souvent 0h, j'ai du mal à me bloquer du temps.", p:"Submergée" },
+      { l:"B", t:"Entre 2h et 5h par semaine, de façon irrégulière.", p:"Silencieuse" },
+      { l:"C", t:"Entre 5h et 10h par semaine — mais j'ai l'impression de me disperser.", p:"Dispersée" },
+      { l:"D", t:"Plus de 10h par semaine, mais les résultats ne suivent pas.", p:"Bloquée" }
+    ]
+  },
+  {
+    q: "Qu'est-ce qui décrit le mieux ta situation sur les réseaux professionnels ?",
+    opts: [
+      { l:"A", t:"Je n'ai pas encore de compte professionnel, ou il est encore vide / privé.", p:"Bloquée" },
+      { l:"B", t:"J'ai un compte mais je poste très rarement — moins de 2 fois par mois.", p:"Silencieuse" },
+      { l:"C", t:"Je poste régulièrement mais personne ne sait vraiment ce que je vends.", p:"Freinée" },
+      { l:"D", t:"J'ai plusieurs comptes sur des niches différentes, sans cohérence.", p:"Dispersée" }
+    ]
+  },
+  {
+    q: "Quelle phrase résonne le plus avec ce que tu vis en ce moment ?",
+    opts: [
+      { l:"A", t:"Je sais que je peux aider des gens, mais je ne sais pas exactement quoi vendre ni comment formuler mon offre.", p:"Bloquée" },
+      { l:"B", t:"J'ai tout prêt — l'offre, les visuels, la page de vente — mais je n'arrive pas à appuyer sur 'publier'.", p:"Freinée" },
+      { l:"C", t:"Je commence plein de choses, je suis pleine d'idées, mais rien n'avance vraiment.", p:"Dispersée" },
+      { l:"D", t:"Je n'arrive tout simplement pas à trouver du temps pour m'y mettre sérieusement.", p:"Submergée" },
+      { l:"E", t:"J'ai une offre mais personne ne me voit — je poste mais ça ne génère aucune vente.", p:"Silencieuse" }
+    ]
+  },
+  {
+    q: "Qu'as-tu réellement lancé jusqu'ici ? (sois honnête)",
+    opts: [
+      { l:"A", t:"Rien — je suis encore en mode réflexion / préparation.", p:"Bloquée" },
+      { l:"B", t:"J'ai commencé des choses mais je n'en ai jamais terminé aucune.", p:"Dispersée" },
+      { l:"C", t:"J'ai un produit ou service créé, mais peu ou pas de ventes.", p:"Silencieuse" },
+      { l:"D", t:"J'ai déjà eu quelques ventes, mais ça reste irrégulier et insuffisant.", p:"Freinée" }
+    ]
+  },
+  {
+    q: "Quand quelqu'un te pose une question sur ton activité ou te demande ton aide, que fais-tu ?",
+    opts: [
+      { l:"A", t:"Je réponds et j'aide gratuitement — mais je n'ose pas mentionner que j'ai une offre payante.", p:"Freinée" },
+      { l:"B", t:"Je ne sais pas vraiment quoi répondre car je n'ai pas d'offre claire.", p:"Bloquée" },
+      { l:"C", t:"Je commence à répondre, puis je change de sujet vers une autre idée qui m'a rattrapée.", p:"Dispersée" },
+      { l:"D", t:"Je veux répondre mais je ne trouve jamais le moment — je suis trop prise par autre chose.", p:"Submergée" }
+    ]
+  },
+  {
+    q: "Quelle est ta principale crainte par rapport au lancement de ton side-business ?",
+    opts: [
+      { l:"A", t:"Ne pas être assez légitime ou experte pour vendre quelque chose.", p:"Bloquée" },
+      { l:"B", t:"Que les gens me jugent ou me trouvent vénale si je parle d'argent.", p:"Freinée" },
+      { l:"C", t:"Me tromper de direction et perdre du temps sur la mauvaise idée.", p:"Dispersée" },
+      { l:"D", t:"Ne jamais trouver le temps de vraiment m'y mettre.", p:"Submergée" },
+      { l:"E", t:"Que mon contenu soit invisible et que personne ne me remarque.", p:"Silencieuse" }
+    ]
+  },
+  {
+    q: "Comment passes-tu la plupart de tes soirées et weekends disponibles ?",
+    opts: [
+      { l:"A", t:"À consommer du contenu (podcasts, formations, articles) sur le business — sans passer à l'action.", p:"Bloquée" },
+      { l:"B", t:"À scroller, regarder des séries, décompresser — et me dire 'demain je m'y mets'.", p:"Submergée" },
+      { l:"C", t:"À créer des outils, des Notion, des logos... qui ne débouchent sur aucune vente.", p:"Dispersée" },
+      { l:"D", t:"À perfectionner mon offre ou mon contenu sans jamais le publier.", p:"Freinée" }
+    ]
+  },
+  {
+    q: "Qu'est-ce dont tu as le plus besoin en ce moment pour avancer ?",
+    opts: [
+      { l:"A", t:"Savoir exactement quoi vendre et comment formuler mon offre en une phrase claire.", p:"Bloquée" },
+      { l:"B", t:"Trouver le courage de proposer mon offre publiquement et d'assumer de vendre.", p:"Freinée" },
+      { l:"C", t:"Arrêter de me disperser et me concentrer enfin sur un seul projet.", p:"Dispersée" },
+      { l:"D", t:"Un système concret pour me libérer du temps et m'y mettre vraiment.", p:"Submergée" },
+      { l:"E", t:"Être vue, attirer des prospects, sortir de l'invisibilité.", p:"Silencieuse" }
+    ]
+  }
+];
+
+const profiles = {
+  "Bloquée": {
+    emoji: "🔒",
+    tag: "Je ne sais pas quoi vendre",
+    desc: "Tu as de vraies compétences — tes collègues le savent, tu le sais. Mais dès qu'il s'agit de transformer tout ça en une offre concrète et vendable, tu te bloques. Tu consommes formation après formation sans jamais formuler quoi que ce soit. Ton vrai blocage : la peur de ne pas être légitime.",
+    module: "Module 1 : Clarifier",
+    path: ["Clarifier", "Visibilité", "Vendre"],
+    objectif: "Formuler ton offre en 1 phrase claire et la tester en moins de 14 jours."
+  },
+  "Freinée": {
+    emoji: "🛑",
+    tag: "J'ai tout prêt mais je n'ose pas vendre",
+    desc: "Ton offre existe, ton produit est prêt, tu as une communauté qui engage. Mais tu n'as jamais fait de post de lancement. Tu trouves toujours une raison de peaufiner encore. En réalité, tu as peur du jugement — peur que parler d'argent fasse fuir ta communauté.",
+    module: "Module 1 : Vendre",
+    path: ["Vendre", "Visibilité", "Organisation"],
+    objectif: "Envoyer 10 propositions commerciales en 14 jours et encaisser ton premier 'oui'."
+  },
+  "Dispersée": {
+    emoji: "🌀",
+    tag: "Elle fait tout, mais rien n'avance",
+    desc: "Tu es ultra-active, pleine d'idées brillantes. Mais tu passes d'une niche à l'autre, d'un outil à l'autre, sans jamais aller au bout d'une seule direction. Tu confonds activité et résultat. Tu as besoin d'un engagement ferme sur une seule voie pendant 90 jours minimum.",
+    module: "Module 1 : Clarifier",
+    path: ["Clarifier", "Organisation", "Visibilité"],
+    objectif: "Choisir 1 seule idée, éliminer les autres, et s'y tenir pendant 90 jours."
+  },
+  "Submergée": {
+    emoji: "⏰",
+    tag: "Elle a l'idée, mais elle n'a pas le temps",
+    desc: "Tu sais exactement ce que tu veux lancer. Mais entre le boulot, la vie perso et la fatigue, tu ne trouves jamais le temps. En réalité, ces heures existent déjà — elles partent en scrolling et en séries. Ce qu'il te manque, c'est un système pour les réaffecter intelligemment.",
+    module: "Module 1 : Organisation",
+    path: ["Organisation", "Visibilité", "Vendre"],
+    objectif: "Identifier tes 5 à 7h disponibles par semaine et les tenir pendant 14 jours."
+  },
+  "Silencieuse": {
+    emoji: "🤫",
+    tag: "J'ai une offre claire mais personne ne me voit",
+    desc: "Tu as une offre, peut-être même un produit. Mais tu postes rarement, tu disparais des semaines entières, et tu n'as jamais vraiment parlé de ce que tu vends. Tu attends que les bonnes personnes te trouvent seules. Résultat : ton expertise reste invisible.",
+    module: "Module 1 : Visibilité",
+    path: ["Visibilité", "Vendre", "Organisation"],
+    objectif: "Publier 9 posts en 3 semaines sur 1 canal unique et recevoir 5 interactions qualifiées."
+  }
+};
+
+let current = 0;
+let answers = new Array(9).fill(null);
+
+function startQuiz() {
+  document.getElementById('intro').style.display = 'none';
+  const quiz = document.getElementById('quiz');
+  quiz.style.display = 'block';
+  quiz.classList.add('fade-up');
+  render();
+}
+
+function render() {
+  const q = questions[current];
+  const pct = Math.round(((current + 1) / questions.length) * 100);
+  document.getElementById('progress-label').textContent = `Question ${current + 1}`;
+  document.getElementById('progress-count').textContent = `${current + 1} / ${questions.length}`;
+  document.getElementById('progress-fill').style.width = pct + '%';
+  document.getElementById('q-text').textContent = q.q;
+
+  const opts = document.getElementById('options');
+  opts.innerHTML = '';
+  q.opts.forEach((o, i) => {
+    const div = document.createElement('div');
+    div.className = 'opt' + (answers[current] === i ? ' selected' : '');
+    div.innerHTML = `<div class="opt-letter">${o.l}</div><div class="opt-text">${o.t}</div>`;
+    div.onclick = () => select(i);
+    opts.appendChild(div);
+  });
+
+  document.getElementById('btn-prev').disabled = current === 0;
+  document.getElementById('btn-next').disabled = answers[current] === null;
+  document.getElementById('btn-next').textContent = current === questions.length - 1 ? 'Voir mon profil →' : 'Suivant →';
+}
+
+function select(i) {
+  answers[current] = i;
+  render();
+}
+
+function nextQ() {
+  if (answers[current] === null) return;
+  if (current === questions.length - 1) { showResult(); return; }
+  current++;
+  render();
+}
+
+function prevQ() {
+  if (current === 0) return;
+  current--;
+  render();
+}
+
+function showResult() {
+  const scores = { Bloquée: 0, Freinée: 0, Dispersée: 0, Submergée: 0, Silencieuse: 0 };
+  answers.forEach((a, qi) => {
+    if (a !== null) scores[questions[qi].opts[a].p]++;
+  });
+  const winner = Object.entries(scores).sort((a, b) => b[1] - a[1])[0][0];
+  const p = profiles[winner];
+
+  document.getElementById('quiz').style.display = 'none';
+  const ra = document.getElementById('result');
+  ra.style.display = 'block';
+  ra.classList.add('fade-up');
+
+  const pathHtml = p.path.map((s, i) =>
+    `<span class="path-step">${s}</span>${i < p.path.length - 1 ? '<span class="path-arrow">→</span>' : ''}`
+  ).join('');
+
+  const scoresHtml = Object.entries(scores)
+    .sort((a, b) => b[1] - a[1])
+    .map(([name, val]) => `
+      <div class="score-item${name === winner ? ' winner' : ''}">
+        <span class="score-name">${name}</span>
+        <span class="score-val">${val}/9</span>
+      </div>
+    `).join('');
+
+  ra.innerHTML = `
+    <div class="result-hero">
+      <div class="result-label">Ton profil</div>
+      <div class="result-profil">${p.emoji} La ${winner}</div>
+      <div class="result-tag-hero">"${p.tag}"</div>
+      <div class="result-module-badge">⚡ Priorité absolue — ${p.module}</div>
+    </div>
+
+    <div class="result-card">
+      <div class="result-card-title">Ton diagnostic</div>
+      <p class="result-desc">${p.desc}</p>
+    </div>
+
+    <div class="result-card">
+      <div class="result-card-title">Ton parcours recommandé</div>
+      <div class="path-row">${pathHtml}</div>
+    </div>
+
+    <div class="result-card">
+      <div class="result-card-title">Objectif J+14</div>
+      <div class="objectif-box">
+        <strong>Ta mission des 14 prochains jours</strong>
+        ${p.objectif}
+      </div>
+    </div>
+
+    <div class="result-card">
+      <div class="result-card-title">Répartition de tes réponses</div>
+      <div class="scores-grid">${scoresHtml}</div>
+    </div>
+
+    <button class="btn-cta" onclick="goToNotion()">Accéder à mon parcours personnalisé →</button>
+    <button class="btn-restart" onclick="restart()">Refaire le questionnaire</button>
+  `;
+}
+
+function goToNotion() {
+  // Remplace ce lien par l'URL de ton espace Notion
+  window.open('https://notion.so/TON-LIEN-ICI', '_blank');
+}
+
+function restart() {
+  current = 0;
+  answers = new Array(9).fill(null);
+  document.getElementById('result').style.display = 'none';
+  document.getElementById('result').innerHTML = '';
+  document.getElementById('intro').style.display = 'flex';
+}
+</script>
+</body>
+</html>
